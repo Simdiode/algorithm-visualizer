@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Step through Bubble, Merge and Quick Sort, Linear and Binary Search. Compare real Python runtimes.">
+  <title>Algorithm Visualiser</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231c3834'/%3E%3Cpath d='M8 23V16M16 23V8M24 23V12' stroke='%23b9ead7' stroke-width='4'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Algorithm Visualiser home"><span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="brand-name">Algorithm Visualiser</span></a>
+    <nav class="view-tabs" aria-label="Workspace"><button class="view-tab active" data-view="visualizer" aria-pressed="true">Visualizer</button><button class="view-tab" data-view="benchmark" aria-pressed="false">Benchmark</button></nav>
+  </header>
+
+  <main>
+    <section id="visualizer-view" aria-label="Algorithm visualizer">
+      <h1 class="sr-only">Algorithm Visualizer</h1>
+      <form id="controls-form" class="config-panel">
+        <div class="field algorithm-field"><label for="algorithm">Algorithm</label><select id="algorithm"><optgroup label="Sorting"><option value="bubble">Bubble Sort</option><option value="merge">Merge Sort</option><option value="quick">Quick Sort</option></optgroup><optgroup label="Searching"><option value="linear">Linear Search</option><option value="binary">Binary Search</option></optgroup></select></div>
+        <div class="field array-field"><label for="array-input">Your array <span>comma or space separated</span></label><input id="array-input" value="42, 18, 65, 30, 82, 12, 56, 25, 74, 38, 90, 48" autocomplete="off" spellcheck="false" aria-describedby="input-help"></div>
+        <div class="field target-field" id="target-field" hidden><label for="target">Target</label><input id="target" type="number" value="56" min="-999" max="999" step="1"></div>
+        <button type="submit" class="button secondary apply-button">Apply array</button>
+        <div class="dataset-row"><span id="input-help">Try a dataset</span><button type="button" class="preset" data-preset="random">Random</button><button type="button" class="preset" data-preset="sorted">Sorted</button><button type="button" class="preset" data-preset="reversed">Reversed</button><button type="button" class="preset" data-preset="duplicates">Duplicates</button><label class="size-control" for="size">Size <select id="size"><option>8</option><option selected>12</option><option>20</option><option>32</option><option>48</option></select></label><span class="input-limit">Up to 48 values · −999 to 999</span></div>
+      </form>
+      <div id="error" class="notice error" role="alert" hidden></div>
+      <div id="preparation-note" class="notice" hidden>Binary Search uses a sorted copy, prepared with Merge Sort. Indices refer to the array below. Preparation is excluded from search counts.</div>
+
+      <div class="workspace">
+        <section class="visual-card" aria-label="Animation and playback">
+          <div class="card-heading"><div><span class="small-label">NOW VISUALIZING</span><h2 id="algorithm-title">Bubble Sort</h2></div><span id="state-badge" class="state-badge">Ready</span></div>
+          <div class="metrics"><div><span id="comparisons">0</span><label>Comparisons</label></div><div><span id="swaps">0</span><label>Swaps</label></div><div><span id="writes">0</span><label>Array writes</label></div><div class="metric-note">Array indices<br>start at <b>0</b></div></div>
+          <div class="plot-wrap"><div id="chart" class="bar-chart" role="img" aria-label="Array visualization"><div class="chart-grid"></div><div class="zero-line" id="zero-line"></div><div id="bars" class="bars"></div><div id="empty-state" hidden>Empty array. Add values to explore.</div></div></div>
+          <div id="merge-buffers" class="merge-buffers" hidden></div>
+          <div class="legend"><span><i class="legend-default"></i>Unprocessed</span><span><i class="legend-active"></i>Comparing</span><span><i class="legend-swap"></i>Writing / swap</span><span><i class="legend-pivot"></i>Pivot</span><span><i class="legend-fixed"></i>Fixed / found</span></div>
+          <div class="current-step" role="status" aria-live="polite"><span class="step-dot"></span><span id="step-message">Loading the algorithm…</span></div>
+          <div class="playback">
+            <div class="seek-row"><label for="timeline" id="step-counter">Step 0 / 0</label><input id="timeline" type="range" min="0" max="0" value="0" aria-label="Seek execution step"></div>
+            <div class="playback-buttons"><div class="transport"><button id="reset" class="icon-button" title="Restart" aria-label="Restart">↺</button><button id="back" class="icon-button" title="Previous step (Left arrow)" aria-label="Previous step">←</button><button id="play" class="button primary"><span id="play-icon" aria-hidden="true">▶</span><span id="play-label">Play</span></button><button id="next" class="icon-button" title="Next step (Right arrow)" aria-label="Next step">→</button><button id="finish" class="icon-button" title="Jump to last step" aria-label="Jump to last step">⇥</button></div><label class="speed-control" for="speed">Speed <select id="speed"><option value="1000">0.5×</option><option value="500" selected>1×</option><option value="250">2×</option><option value="100">5×</option></select></label></div>
+          </div>
+        </section>
+
+        <aside class="inspector">
+          <section class="explanation"><div class="small-label">ALGORITHM OVERVIEW</div><p id="description"></p><div id="complexity" class="complexity"></div><div id="algorithm-note" class="algorithm-note"></div></section>
+          <section class="code-section"><div class="section-heading"><h3>Pseudocode</h3><span>current line highlighted</span></div><ol id="pseudocode" class="pseudocode"></ol></section>
+          <section class="trace-section"><div class="section-heading"><h3>Execution trace</h3><span id="trace-count">0 steps</span></div><ol id="trace-list" class="trace-list" aria-label="Execution trace"></ol></section>
+        </aside>
+      </div>
+      <div class="workspace-footnote"><span><kbd>Space</kbd> play / pause <kbd>←</kbd><kbd>→</kbd> step through</span><span>Comparisons count value checks. A swap counts as two main-array writes.</span></div>
+    </section>
+
+    <section id="benchmark-view" hidden aria-label="Runtime benchmarks">
+      <h1 class="sr-only">Algorithm Runtime Benchmark</h1>
+      <div class="benchmark-controls"><div class="segmented" aria-label="Benchmark algorithms"><button class="active" data-group="sort" aria-pressed="true">Sorting</button><button data-group="search" aria-pressed="false">Searching</button></div><div class="field case-field"><label for="case">Input case</label><select id="case"><option value="best">Best case</option><option value="average" selected>Average case</option><option value="worst">Worst case</option></select></div><button id="run-benchmark" class="button primary">Run benchmark <span aria-hidden="true">↗</span></button><button id="export-csv" class="button secondary" disabled>Export CSV</button></div>
+      <div id="benchmark-error" class="notice error" role="alert" hidden></div>
+      <section class="benchmark-card"><div class="card-heading"><div><span class="small-label">RUNTIME VS INPUT SIZE</span><h2 id="benchmark-title">Sorting algorithms</h2></div><span class="chart-caption">Milliseconds · logarithmic y-axis</span></div><div id="benchmark-legend" class="benchmark-legend"></div><div id="benchmark-chart" class="benchmark-chart"><div class="benchmark-empty"><span class="empty-chart-icon" aria-hidden="true">↗</span><h3>Put the algorithms to the test.</h3><p>Run a benchmark to compare best, average and worst cases<br>at 32, 128, 512 and 1,024 elements.</p></div></div><div class="table-scroll"><table id="benchmark-table" hidden><caption class="sr-only">Measured runtimes and comparison counts</caption><thead></thead><tbody></tbody></table></div></section>
+      <div class="benchmark-details"><section><h3>What do these cases mean?</h3><div id="case-details"></div></section><section><h3>Execution Time Measurement</h3><p id="method-note">For each algorithm and input size, five timing samples are collected. The middle value (median) is displayed in milliseconds (ms).</p><p>Only the algorithm is timed. Animation, input preparation and loading Python are excluded. Short operations are repeated and averaged within each sample.</p><p class="muted">Lower times indicate faster execution for the selected input. Results depend on your device and other applications running at the time.</p></section></div>
+    </section>
+  </main>
+  <footer><span>ALGORITHM VISUALISER</span><span>Bubble · Merge · Quick · Linear · Binary</span></footer>
+</div>
+</body>
+</html>

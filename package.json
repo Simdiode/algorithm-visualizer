@@ -1,0 +1,7 @@
+{
+  "name": "algorithm-visualizer-project-21",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Python algorithms with a dependency-free browser visualizer",
+  "scripts": {"dev": "python3 server.py --host 0.0.0.0 --no-browser"}
+}
